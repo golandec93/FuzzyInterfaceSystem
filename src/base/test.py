@@ -53,7 +53,6 @@ def initialization_test():
     else:
         raise Exception("MembershipFunctions.triangle and MembershipFunctions.trapeze works bad")
 
-
 @test_decorator
 def algorithm_test():
     # linguistic variables and terms initialization
@@ -202,11 +201,23 @@ def algorithm_test():
 
     assert defuzzificated[assurance] == 65, "unexpected result! Check your algorithm"
 
-
+@test_decorator
+def deffuzificator_test():
+    accuracy = 0.005
+    result = Defuzzificators.center_of_gravity(0, 2, lambda x: -(x-2)**2+2, accuracy)
+    print('''defuzzificator: center_of_gravity
+    start: -2
+    end: 2
+    function: -x^2 + 2
+    accuarcy: 0.05)
+    ______________
+    result = ''', result)
+    assert abs(result-2) < accuracy, "center of gravity works wrong!"
 
 try:
     initialization_test()
     algorithm_test()
+    deffuzificator_test()
 except Exception as e:
     print("test failed\n\n" + str(e))
     raise e
