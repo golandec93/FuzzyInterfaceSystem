@@ -1,6 +1,7 @@
 from src.base.model.rulebase import RuleBase
 import sys
 
+
 class FuzzyInterfaceSystem:
     def __init__(self, rule_base, and_operator, or_operator, activator, accumulator, defuzzificator, accuracy):
         sys.setrecursionlimit(2000)
@@ -67,30 +68,32 @@ class FuzzyInterfaceSystem:
         for rule in aggregated.keys():
             st_result = {}
             for statement in rule.then_st:
-                def func(x):  return self.activator((aggregated[rule]), statement.get_variety(x))
-                st_result[statement] = func
+                st_result[statement] = lambda x: self.activator((aggregated[rule]), statement.get_variety(x))
             result[rule] = st_result
         return result
 
     def accumulate(self, activated):
-        result = {}
+        sub_result = {}
+        # take
         for rule in activated.keys():
             for st in rule.then_st:
-                if st.ling_var not in result.keys():
-                    def f(x): return self.accumulator(activated[rule][st](x), st.get_variety(x))
-                    result[st.ling_var] = f
-                else:
-                    def g(x): return self.accumulator(result[st.ling_var](x), st.get_variety(x))
-                    result[st.ling_var] = g
+                if st.ling_var not in sub_result.keys():
+                    sub_result[st.ling_var] = []
+                sub_result[st.ling_var].append(activated[rule][st])
+        result = {}
+        for key in sub_result:
+            def execute(x):
+                values = [active(x) for active in sub_result[key]]
+                return self.accumulator(values)
+            result[key] = execute
         return result
 
     def defuzzificate(self, accumulated):
         result = {}
-        for ling_var in self.output_ling_vars:
+        for ling_var in accumulated.keys():
             d = self.defuzzificator(ling_var.universum[0], ling_var.universum[1], accumulated[ling_var], self.accuracy)
             result[ling_var] = d
         return result
-
 
 
 class Utils:
@@ -117,7 +120,6 @@ class Utils:
                 return True
         return False
 
-
 class Activators:
     @staticmethod
     def min_activator(a, b): return min(a, b)
@@ -125,11 +127,10 @@ class Activators:
 
 class Accumulators:
     @staticmethod
-    def max_accumulator(a, b): return max(a, b)
+    def max_accumulator(*args): return max(*args)
 
 
 class Defuzzificators:
-
     @staticmethod
     def center_of_gravity(start, end, function, accuracy):
         pass
@@ -152,9 +153,8 @@ class Defuzzificators:
             cur += step
         for x in result:
             if x == maximum:
-                return result.index(x)*step
+                return result.index(x) * step
         return None
-
 
     @staticmethod
     def right_most_maximum(start, end, function, accuracy):
