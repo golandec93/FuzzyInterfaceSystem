@@ -123,13 +123,13 @@ for i in range(0, 20):
 fis = FuzzyInterfaceSystem(rule_base, AND, OR,
                            Activators.min_activator,
                            Accumulators.max_accumulator,
-                           Defuzzificators.left_most_maximum,
-                           0.005)
+                           Defuzzificators.center_of_gravity,
+                           0.05)
 x_array = range(170, 237, 3)
 y_array = range(0, 101, 4)
 Z = []
 
-print("start grid culculation")
+print("start grid culculating")
 
 for y in y_array:
     res = []

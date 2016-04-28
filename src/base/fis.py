@@ -133,7 +133,20 @@ class Accumulators:
 class Defuzzificators:
     @staticmethod
     def center_of_gravity(start, end, function, accuracy):
-        pass
+        step = (end-start)/round((end-start) / accuracy)
+        upper_integral = 0
+        down_integral = 0
+        cur = start
+        while cur <= end:
+            _ = function(cur)
+            upper_integral += cur*_
+            down_integral += _
+            cur += step
+        upper_integral -= (function(start)*start + function(end)*end)/2
+        down_integral -= (function(start) + function(end))/2
+        return upper_integral/down_integral
+
+
 
     @staticmethod
     def center_of_area(start, end, function, accuracy):

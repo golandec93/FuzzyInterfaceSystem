@@ -200,6 +200,8 @@ def algorithm_test():
     for ling_var in defuzzificated:
         print("{0} : {1}".format(ling_var, defuzzificated[ling_var]))
 
+    assert defuzzificated[assurance] == 65, "unexpected result! Check your algorithm"
+
 
 
 try:
