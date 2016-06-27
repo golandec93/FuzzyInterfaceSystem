@@ -59,8 +59,7 @@ class FuzzyInterfaceSystem:
                     cur = new_cur
                 elif cur.logical_operator is None:
                     cur = sts[0]
-            if varieties[0] != 0:
-                result[rule] = varieties[0]
+            result[rule] = varieties[0]
         return result
 
     def activate(self, aggregated):
@@ -68,24 +67,33 @@ class FuzzyInterfaceSystem:
         for rule in aggregated.keys():
             st_result = {}
             for statement in rule.then_st:
-                st_result[statement] = lambda x: self.activator((aggregated[rule]), statement.get_variety(x))
+                st_result[statement] = lambda x: self.activator(aggregated[rule], statement.get_variety(x))
+                # <debug>
+                if st_result[statement](70) == 1:
+                   print(id(st_result[statement]), st_result[statement](70))
+                #</debug>
             result[rule] = st_result
         return result
 
     def accumulate(self, activated):
         sub_result = {}
-        # take
+
+        # collect pairs (linguistic_variable, [func1, func2, ...])
         for rule in activated.keys():
-            for st in rule.then_st:
+            for st in activated[rule].keys():
+                print("test of activated: {0}   {1}".format(id(activated[rule][st]), activated[rule][st](70)))
                 if st.ling_var not in sub_result.keys():
                     sub_result[st.ling_var] = []
                 sub_result[st.ling_var].append(activated[rule][st])
+
+        # for each linguistic variable accumulate [func1, func2, ..] in 1 function (max, for example)
         result = {}
         for key in sub_result:
             def execute(x):
                 values = [active(x) for active in sub_result[key]]
                 return self.accumulator(values)
             result[key] = execute
+            print("[debug] execute(70) = {0}".format(execute(70)))
         return result
 
     def defuzzificate(self, accumulated):

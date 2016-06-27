@@ -41,15 +41,6 @@ class Statement:
         return "{0} is {1}".format(self.ling_var, self.term)
 
     def get_full_statement_string(self):
-        '''st = self
-        result = ""
-        while st is not None:
-            result += str(st)
-            if st.logical_operator in LogicalOperator.and_operators:
-                result += " AND "
-            elif st.logical_operator in LogicalOperator.or_operators:
-                result += " OR "
-            st = st.next_st'''
         return str(self)
 
     def get_variety(self, x):
