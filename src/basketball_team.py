@@ -120,13 +120,16 @@ for i in range(0, 20):
     rule_base.add(Rule(if_sts[i], then_sts[i]))
 
 # fuzzy interface system initializtion
+# also available: Difuzzificator.right_most_maximum
+#                 Difuzzificator.left_most_maximum
+#
 fis = FuzzyInterfaceSystem(rule_base, AND, OR,
                            Activators.min_activator,
                            Accumulators.max_accumulator,
                            Defuzzificators.center_of_gravity,
                            0.05)
-x_array = range(170, 237, 3)
-y_array = range(0, 101, 4)
+x_array = range(170, 237, 6)
+y_array = range(0, 101, 5)
 Z = []
 
 print("start grid culculating")
@@ -138,7 +141,7 @@ for y in y_array:
         # actually there is 1 key, but hi is in set
         for key in processed.keys():
             res.append(processed[key])
-    # dirty hack
+    # dirty hack of empty result bug
     if len(res) == 0:
         res = [0 for i in range(0, len(x_array))]
     Z.append(res)
@@ -153,5 +156,5 @@ print("x:\n", X)
 print("y:\n", Y)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.plot_surface(X, Y, new_Z,  rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+ax.plot_surface(Y, X, new_Z,  rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 plt.show()
